@@ -12,9 +12,25 @@ nccpi_boxplot = function(nccpi, pbenefit, area_name) {
                     data.frame(FIPS = nccpi[,area_name], year = nccpi$year, rot = nccpi$wyield_cs_nccpi5_mean, pbenefit = nccpi$soy_pbenefit_nccpi5, nccpi = "80-90"))
   
   if(pbenefit) {
-    par(mfrow=c(2,1))
-    boxplot(pbenefit~nccpi, data = corn_nccpi, ylab = "Weighted Percent Rotation Benefit", main = "Corn", xlab = "Soil NCCPI", col=rainbow(10))
-    boxplot(pbenefit~nccpi, data = soy_nccpi, ylab = "Weighted Percent Rotation Benefit", main = "Soy", xlab = "Soil NCCPI", col = rainbow(10))
+    corn_nccpi$Crop = "Corn"
+    soy_nccpi$Crop = "Soybeans"
+    both = rbind(corn_nccpi, soy_nccpi)
+    
+    ggplot(both, aes(x = nccpi, y = pbenefit, fill = Crop)) +
+       geom_boxplot(outlier.shape=NA, position=position_dodge(1)) + stat_boxplot(geom ='errorbar',position=position_dodge(1)) + 
+      scale_fill_manual(values = c(brewer.pal(3, "Greens"))) +
+      scale_y_continuous(limits = c(-10, 20)) + xlab("NCCPI Quintile") + ggtitle("Rotation Benefit by NCCPI") + 
+      ylab("Weighted % \n Rotation Benefit") #+ theme(axis.title.y = element_text(
+                                            #                                     margin = margin(0,20,0,0)))
+    
+    #par(mar=c(5,8.5,4,2))
+    #par(mfrow=c(1,1))
+    #boxplot(pbenefit~nccpi, outline=F,pmax = 0.95, pmin = 0.05, data = corn_nccpi, main = "Corn", xlab = "Soil NCCPI", col=rainbow(10))
+    #mtext("Weighted % \n Rotation Benefit",side=2,las=1,line=2.2)
+    #boxplot(pbenefit~nccpi,outline=F,data = soy_nccpi, main = "Soy", add = T, xlab = "Soil NCCPI", col = rainbow(10))
+    #mtext("Weighted % \n Rotation Benefit",side=2,las=1,line=2.2)
+    #par(mar=c(0,0,0,0))
+    
   } else {
     par(mfrow=c(2,1))
     boxplot(rot~nccpi, data = corn_nccpi, ylab = "Weighted Rotation Yield", main = "Corn", xlab = "Soil NCCPI", col=rainbow(10))
